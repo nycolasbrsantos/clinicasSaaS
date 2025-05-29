@@ -23,7 +23,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { auth } from "@/lib/auth";
 import { authClient } from "@/lib/auth-client";
 
 // Schema for login form
@@ -60,8 +59,11 @@ const LoginForm = () => {
         onSuccess: () => {
           router.push("/dashboard");
         },
-        onError: (error) => {
-          toast.error("Verifique suas credenciais e tente novamente.");
+        onError: (ctx) => {
+          if (ctx.error.code === "INVALID_EMAIL_OR_PASSWORD") {
+            toast.error("Email ou senha inválidos");
+            return;
+          }
         },
       },
     );
