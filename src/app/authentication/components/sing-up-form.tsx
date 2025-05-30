@@ -1,3 +1,5 @@
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -72,6 +74,8 @@ const SingUpForm = () => {
       },
     );
   }
+
+  // Form render and card components
 
   return (
     <Card>

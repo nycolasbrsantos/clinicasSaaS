@@ -1,3 +1,5 @@
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -28,9 +30,11 @@ import { authClient } from "@/lib/auth-client";
 // Schema for login form
 
 const loginSchema = z.object({
-  email: z.string().trim().min(1, { message: "Email é obrigatório" }).email({
-    message: "Email inválido",
-  }),
+  email: z
+    .string()
+    .trim()
+    .min(1, { message: "Email é obrigatório" })
+    .email({ message: "Email inválido" }),
   password: z
     .string()
     .trim()
@@ -68,6 +72,8 @@ const LoginForm = () => {
       },
     );
   }
+
+  // Form render and card components
 
   return (
     <Card>

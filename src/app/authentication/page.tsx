@@ -1,4 +1,4 @@
-// TODO: Add login and register forms
+//authentication page with login and register forms
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -9,7 +9,7 @@ import { auth } from "@/lib/auth";
 import LoginForm from "./components/login-form";
 import SingUpForm from "./components/sing-up-form";
 
-// Authentication page with login form
+// components page render and tabs components
 
 const AuthenticationPage = async () => {
   const session = await auth.api.getSession({

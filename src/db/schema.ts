@@ -37,7 +37,7 @@ export const usersTableRelations = relations(usersTable, ({ many }) => ({
 // table clinics
 
 export const clinicsTable = pgTable("clinics", {
-  id: text("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
@@ -49,11 +49,15 @@ export const clinicsTable = pgTable("clinics", {
 
 export const usersToClinicsTable = pgTable("users_to_clinics", {
   userId: text("user_id")
-    .references(() => usersTable.id)
+    .references(() => usersTable.id, { onDelete: "cascade" })
     .notNull(),
   clinicId: uuid("clinic_id")
-    .references(() => clinicsTable.id)
+    .references(() => clinicsTable.id, { onDelete: "cascade" })
     .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });
 
 // Users to clinic table relations
@@ -105,12 +109,16 @@ export const doctorsTable = pgTable("doctors", {
     .$onUpdate(() => new Date()),
 });
 
-export const doctorsTableRelations = relations(doctorsTable, ({ one }) => ({
-  clinic: one(clinicsTable, {
-    fields: [doctorsTable.clinicId],
-    references: [clinicsTable.id],
+export const doctorsTableRelations = relations(
+  doctorsTable,
+  ({ many, one }) => ({
+    clinic: one(clinicsTable, {
+      fields: [doctorsTable.clinicId],
+      references: [clinicsTable.id],
+    }),
+    appoinments: many(appoinmentsTable),
   }),
-}));
+);
 
 // enum pacient gender
 
@@ -133,12 +141,16 @@ export const pacientsTable = pgTable("pacients", {
     .$onUpdate(() => new Date()),
 });
 
-export const pacientsTableRelations = relations(pacientsTable, ({ one }) => ({
-  clinic: one(clinicsTable, {
-    fields: [pacientsTable.clinicId],
-    references: [clinicsTable.id],
+export const pacientsTableRelations = relations(
+  pacientsTable,
+  ({ many, one }) => ({
+    clinic: one(clinicsTable, {
+      fields: [pacientsTable.clinicId],
+      references: [clinicsTable.id],
+    }),
+    appoinments: many(appoinmentsTable),
   }),
-}));
+);
 
 // enum appointment status
 
