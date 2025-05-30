@@ -2,10 +2,11 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import SignOutButton from "@/app/dashboard/components/sing-out-button";
 import { db } from "@/db";
 import { usersToClinicsTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
+
+import SignOutButton from "./_components/sing-out-button";
 
 // server component, so we can use headers to get the session, and redirect to the authentication page if the user is not logged in
 
