@@ -1,7 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
 import {
   Dialog,
   DialogContent,
@@ -12,14 +8,7 @@ import {
 
 import ClinicForm from "./components/form";
 
-const clinicFormSchema = z.object({
-  name: z.string().min(1, { message: "Nome é obrigatório" }),
-});
-
 const ClinicFormPage = () => {
-  const form = useForm<z.infer<typeof clinicFormSchema>>({
-    resolver: zodResolver(clinicFormSchema),
-  });
   return (
     <div>
       <Dialog open={true}>
