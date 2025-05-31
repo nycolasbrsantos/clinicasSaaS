@@ -134,8 +134,6 @@ const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
             )}
           />
 
-          {/* 2. Especialidade */}
-
           <FormField
             control={form.control}
             name="specialty"
@@ -386,7 +384,12 @@ const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
           />
 
           <DialogFooter>
-            <Button type="submit" disabled={upsertDoctorAction.isPending}>
+            <Button
+              type="submit"
+              disabled={
+                upsertDoctorAction.isPending || form.formState.isSubmitting
+              }
+            >
               {upsertDoctorAction.isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
