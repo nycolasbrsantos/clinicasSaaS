@@ -1,12 +1,9 @@
-import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { db } from "@/db";
-import { usersToClinicsTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
-import SignOutButton from "./_components/sing-out-button";
+import SignOutButton from "./_components/sign-out-button";
 
 // server component, so we can use headers to get the session, and redirect to the authentication page if the user is not logged in
 
@@ -14,19 +11,14 @@ const DashboardPage = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+
   if (!session?.user) {
     redirect("/authentication");
   }
 
-  // get clinics from user
-  const clinics = await db.query.usersToClinicsTable.findMany({
-    where: eq(usersToClinicsTable.userId, session.user.id),
-  });
-
-  // if user has no clinics, redirect to clinic form
-  if (clinics.length === 0) redirect("/clinic-form");
-
-  // if user has clinics, show the dashboard
+  if (!session.user.clinic) {
+    redirect("/clinic-form");
+  }
 
   return (
     <div>
