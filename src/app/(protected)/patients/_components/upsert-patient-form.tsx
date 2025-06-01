@@ -4,9 +4,9 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { upsertPatient } from "@/actions/upsert-patient";
+import { upsertPatientSchema } from "@/actions/upsert-patient/schema";
 import { Button } from "@/components/ui/button";
 import {
   DialogContent,
@@ -33,21 +33,6 @@ import {
 } from "@/components/ui/select";
 import { patientsTable } from "@/db/schema";
 
-const formSchema = z.object({
-  name: z.string().trim().min(1, {
-    message: "Nome é obrigatório.",
-  }),
-  email: z.string().email({
-    message: "Email inválido.",
-  }),
-  phoneNumber: z.string().trim().min(1, {
-    message: "Número de telefone é obrigatório.",
-  }),
-  sex: z.enum(["male", "female"], {
-    required_error: "Sexo é obrigatório.",
-  }),
-});
-
 interface UpsertPatientFormProps {
   isOpen: boolean;
   patient?: typeof patientsTable.$inferSelect;
@@ -59,10 +44,11 @@ const UpsertPatientForm = ({
   onSuccess,
   isOpen,
 }: UpsertPatientFormProps) => {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<typeof upsertPatientSchema._type>({
     shouldUnregister: true,
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(upsertPatientSchema),
     defaultValues: {
+      id: patient?.id,
       name: patient?.name ?? "",
       email: patient?.email ?? "",
       phoneNumber: patient?.phoneNumber ?? "",
@@ -72,7 +58,13 @@ const UpsertPatientForm = ({
 
   useEffect(() => {
     if (isOpen) {
-      form.reset(patient);
+      form.reset({
+        id: patient?.id,
+        name: patient?.name ?? "",
+        email: patient?.email ?? "",
+        phoneNumber: patient?.phoneNumber ?? "",
+        sex: patient?.sex ?? undefined,
+      });
     }
   }, [isOpen, form, patient]);
 
@@ -86,11 +78,8 @@ const UpsertPatientForm = ({
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    upsertPatientAction.execute({
-      ...values,
-      id: patient?.id,
-    });
+  const onSubmit = (values: typeof upsertPatientSchema._type) => {
+    upsertPatientAction.execute(values);
   };
 
   return (
@@ -168,10 +157,7 @@ const UpsertPatientForm = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Sexo</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Selecione o sexo" />

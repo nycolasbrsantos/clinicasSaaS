@@ -10,26 +10,28 @@ import { patientsTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { actionClient } from "@/lib/next-safe-actions";
 
-const schema = z.object({
-  id: z.string().uuid(),
-});
-
 export const deletePatient = actionClient
-  .schema(schema)
+  .schema(
+    z.object({
+      id: z.string().uuid(),
+    }),
+  )
   .action(async ({ parsedInput }) => {
     const session = await auth.api.getSession({
       headers: await headers(),
     });
-
     if (!session?.user) {
-      throw new Error("Usuário não autorizado");
+      throw new Error("Unauthorized");
     }
-
-    if (!session?.user.clinic?.id) {
-      throw new Error("Clínica não encontrada");
+    const patient = await db.query.patientsTable.findFirst({
+      where: eq(patientsTable.id, parsedInput.id),
+    });
+    if (!patient) {
+      throw new Error("Paciente não encontrado");
     }
-
+    if (patient.clinicId !== session.user.clinic?.id) {
+      throw new Error("Paciente não encontrado");
+    }
     await db.delete(patientsTable).where(eq(patientsTable.id, parsedInput.id));
-
     revalidatePath("/patients");
   });

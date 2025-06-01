@@ -14,7 +14,9 @@ export const upsertPatientSchema = z.object({
   phoneNumber: z.string().min(1, {
     message: "Telefone é obrigatório",
   }),
-  sex: z.enum(["male", "female"]),
+  sex: z.enum(["male", "female"], {
+    required_error: "Sexo é obrigatório",
+  }),
 });
 
 export type UpsertPatientSchema = z.infer<typeof upsertPatientSchema>;
