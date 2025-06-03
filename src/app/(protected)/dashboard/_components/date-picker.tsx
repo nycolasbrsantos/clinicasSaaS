@@ -30,11 +30,12 @@ export function DatePicker({
 
   const handleDateSelect = (dateRange: DateRange | undefined) => {
     if (dateRange?.from && dateRange?.to) {
-      setFrom(dateRange.from);
-      setTo(dateRange.to);
-    }
-    if (dateRange?.to) {
-      setTo(dateRange.to);
+      setFrom(dateRange.from, {
+        shallow: false,
+      });
+      setTo(dateRange.to, {
+        shallow: false,
+      });
     }
   };
 
@@ -52,6 +53,7 @@ export function DatePicker({
             variant={"outline"}
             className={cn(
               "justify-start text-left font-normal",
+              "w-full",
               !date && "text-muted-foreground",
             )}
           >
