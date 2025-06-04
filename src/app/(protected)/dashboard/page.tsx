@@ -3,6 +3,7 @@ import { Calendar } from "lucide-react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { getDashboard } from "@/app/data/get-dashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
 import {
@@ -14,7 +15,6 @@ import {
   PageHeaderContent,
   PageTitle,
 } from "@/components/ui/page-container";
-import { getDashboard } from "@/data/get-dashboard";
 import { auth } from "@/lib/auth";
 
 import { appointmentsTableColumns } from "../appointments/_components/table-columns";
@@ -41,9 +41,7 @@ const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
   if (!session.user.clinic) {
     redirect("/clinic-form");
   }
-  if (!session.user.plan) {
-    redirect("/new-subscription");
-  }
+
   const { from, to } = await searchParams;
   if (!from || !to) {
     redirect(
